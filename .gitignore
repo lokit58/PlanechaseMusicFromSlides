@@ -3,3 +3,5 @@
 
 # Ignore the Music folder and everything inside it
 MusicForPlanes/
+
+__pycache__
