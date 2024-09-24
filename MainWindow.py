@@ -1,15 +1,17 @@
 import tkinter
 from GoogleSlidesAPI import GoogleSlidesAPI as GSA
+from ChaseTracking import ChaseTracking
 import json
-from pygame import mixer 
 import os
-import time
+
 
 class MainWindow(tkinter.Frame,):
 
     def __init__(self, parent):
        
         super().__init__(parent)
+
+        self.chase = None
 
         self.parent = parent
         self.log_text = "Log:\n"
@@ -61,19 +63,6 @@ class MainWindow(tkinter.Frame,):
 
         self.save_to_json(self.presentation_Data)
 
-    def __TEST():
-        mixer.init()
-        current_directory = os.getcwd()
-        relative_path = "MusicForPlanes/Super Mario 64 Music- Lethal Lava Land⧸Desert.mp3"
-        file_path = os.path.join(current_directory, relative_path)
-
-        mixer.music.load(file_path)
-        mixer.music.play()
-
-        time.sleep(5)
-
-        mixer.music.stop()
-
     def __Song_plane_checker(self, music_files, planes): #Possible optimalization with better checker
         for plane in planes["Planes"]:
             #print( plane["plane"].strip())
@@ -96,6 +85,37 @@ class MainWindow(tkinter.Frame,):
             
         except FileNotFoundError:
             self.Log(f"No downloaded Plannechase.\n")
+    
+    def __setup(self):
+        self.chase = ChaseTracking()
+        
+    def __get_music_files(self):
+        return [f for f in os.listdir(os.path.join(os.getcwd(), "MusicForPlanes")) if os.path.isfile(os.path.join(os.path.join(os.getcwd(), "MusicForPlanes"), f))]
+    
+    def __get_planes(self):
+        try:
+            with open(os.path.join(os.getcwd(), "CurrentPlanechase.json"), "r") as file:
+                return  json.load(file)    
+ 
+        except FileNotFoundError:
+            self.Log(f"No downloaded Plannechase.\n")
+            return 0
+
+    def __start_chase(self):
+        planes = self.__get_planes()
+        if planes == 0:
+            return 0
+        
+        music_files = self.__get_music_files()
+
+        self.chase = ChaseTracking(planes, music_files)
+
+        if self.chase is not None:
+            self.Log("Spusť prezentaci pro začátek chasu")
+            self.chase.start()
+        else:
+            self.Log("Neproběhl setup")
+    
 
     def create_widgets(self):
         self.button_1 = tkinter.Button(text="Set presentation ID", command=lambda: self.__getPresentationID())
@@ -107,10 +127,11 @@ class MainWindow(tkinter.Frame,):
         self.button_3 = tkinter.Button(text="Check for missing songs", command=lambda: self.__Check_songs_againts_planes())
         self.button_3.grid(row = 2, column = 0, sticky=tkinter.NSEW)
 
+        self.button_4 = tkinter.Button(text="Start chase", command=lambda: self.__start_chase())
+        self.button_4.grid(row = 3, column = 0, sticky=tkinter.NSEW)
+
         self.inputtxt = tkinter.Text(height = 1, width = 60) 
         self.inputtxt.grid(row = 0, column = 1, sticky=tkinter.NSEW)
 
         self.loglbl = tkinter.Label(text = "") 
-        self.loglbl.grid(row = 3, column = 0, sticky=tkinter.NSEW)
-
-  
+        self.loglbl.grid(row = 4, column = 0, sticky=tkinter.NSEW)
