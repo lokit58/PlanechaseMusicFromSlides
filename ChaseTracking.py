@@ -1,6 +1,5 @@
 import keyboard 
 from pygame import mixer 
-import time
 import os
 
 class ChaseTracking:
@@ -8,12 +7,14 @@ class ChaseTracking:
         self.planes = planes
         self.music_file = music_files
 
+        self.pause = 0
         self.global_index = 0
 
         mixer.init()
 
         keyboard.add_hotkey('left', lambda: self.__on_left_arrow())
         keyboard.add_hotkey('right', lambda: self.__on_right_arrow())
+        keyboard.add_hotkey('space', lambda: self.__on_space())
 
     def __play_song(self, song_name):
         mixer.music.stop()
@@ -24,6 +25,16 @@ class ChaseTracking:
 
         mixer.music.load(file_path)
         mixer.music.play()
+
+    def __on_space(self):
+        if self.pause == 1:
+            print("pause")
+            mixer.music.unpause()
+            self.pause = 0
+        else:
+            print("unpause")
+            mixer.music.pause()
+            self.pause = 1
 
     def __on_left_arrow(self):
         self.global_index -= 1
@@ -39,3 +50,4 @@ class ChaseTracking:
         self.__play_song((self.planes["Planes"][self.global_index]["plane"]).strip())
         keyboard.wait('esc')
         mixer.music.stop()
+        mixer.quit()

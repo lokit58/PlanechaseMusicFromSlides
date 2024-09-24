@@ -11,5 +11,3 @@ if __name__ == "__main__":
     root = tkinter.Tk()
     app = MainWindow(root)
     app.mainloop()
-
-
