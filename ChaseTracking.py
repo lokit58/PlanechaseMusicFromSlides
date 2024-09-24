@@ -19,11 +19,16 @@ class ChaseTracking:
     def __play_song(self, song_name):
         mixer.music.stop()
 
-        current_directory = os.getcwd()
-        relative_path = "MusicForPlanes/" + song_name + ".mp3"
-        file_path = os.path.join(current_directory, relative_path)
+        try:
+            current_directory = os.getcwd()
+            relative_path = "MusicForPlanes/" + song_name + ".mp3"
+            file_path = os.path.join(current_directory, relative_path)
 
-        mixer.music.load(file_path)
+            mixer.music.load(file_path)
+            
+        except:
+            mixer.music.load("MusicForPlanes/Default.mp3")
+        
         mixer.music.play()
 
     def __on_space(self):
@@ -38,6 +43,9 @@ class ChaseTracking:
 
     def __on_left_arrow(self):
         self.global_index -= 1
+        if self.global_index < 0:
+            self.global_index = 0
+
         self.__play_song((self.planes["Planes"][self.global_index]["plane"]).strip())
 
     def __on_right_arrow(self):

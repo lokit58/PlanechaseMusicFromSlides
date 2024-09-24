@@ -6,7 +6,7 @@ import os
 import re
 
 
-class MainWindow(tkinter.Frame,):
+class MainWindow(tkinter.Frame):
 
     def __init__(self, parent):
        
@@ -74,11 +74,14 @@ class MainWindow(tkinter.Frame,):
             for song in music_files:
                 #print(song)
                 if plane["plane"].strip() == song[:-4]:
-                    print(plane["plane"].strip() +" nalezena schoda :D")
-                    break  
+                    #self.Log(plane["plane"].strip() +" nalezena schoda :D") #Show only for debug reasons
+                    #print(plane["plane"].strip() +" nalezena schoda :D")
+                    break
+
             if plane["plane"].strip() != song[:-4]:
-                print(plane["plane"].strip() + " nenalezena schoda :(")
-                    
+                #print(plane["plane"].strip() + " nenalezena schoda :(")
+                self.Log(plane["plane"].strip() + " nenalezena schoda :(")  
+
     def __Check_songs_againts_planes(self):
         music_files = [f for f in os.listdir(os.path.join(os.getcwd(), "MusicForPlanes")) if os.path.isfile(os.path.join(os.path.join(os.getcwd(), "MusicForPlanes"), f))]
         
@@ -117,9 +120,14 @@ class MainWindow(tkinter.Frame,):
 
         if self.chase is not None:
             self.Log("Spusť prezentaci pro začátek chasu")
+            self.parent.update()
+            self.parent.update_idletasks()
             self.chase.start()
+            
         else:
             self.Log("Neproběhl setup")
+
+        self.Log("Konec chasu")
     
 
     def create_widgets(self):
