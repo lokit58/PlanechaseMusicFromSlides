@@ -3,6 +3,7 @@ from GoogleSlidesAPI import GoogleSlidesAPI as GSA
 from ChaseTracking import ChaseTracking
 import json
 import os
+import re
 
 
 class MainWindow(tkinter.Frame,):
@@ -37,7 +38,11 @@ class MainWindow(tkinter.Frame,):
             self.Log(f"Data has been written to {filename}")
 
     def __getPresentationID(self):
-        self.presentation_ID= self.inputtxt.get(1.0, "end-1c") 
+        regex = r'/d/([a-zA-Z0-9_-]+)'
+        preproccesed_ID = self.inputtxt.get(1.0, "end-1c") 
+        match = re.search(regex, preproccesed_ID)
+        self.presentation_ID= match.group(1)
+         
         if self.presentation_ID == "":
             self.Log("No text in ID")
         else:
